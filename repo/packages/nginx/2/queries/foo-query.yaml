@@ -1,0 +1,7 @@
+id: argiblagyblarg
+name: foo-query
+queryString: i am fooing
+start: 24h
+end: now
+isLive: false
+widgetType: list-view

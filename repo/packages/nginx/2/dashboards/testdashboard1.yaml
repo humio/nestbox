@@ -1,0 +1,90 @@
+name: TestDashboard1
+description: Describe your dashboard here.
+widgets:
+  events-per-second:
+    x: 0
+    y: 3
+    height: 5
+    queryString: |-
+      dataspace != humio type = METER m1 > 0 | regex("written-events/(?<dataspace>.*)", field=name) | timechart(dataspace, function={ groupBy(@host, function=avg(m1)) | sum(_avg)}, span=1h)
+    options:
+      interpolation: stepped
+      areaOpacity: '0.2'
+      showLegend: 'true'
+      stacking: normal
+      yAxisScale: linear
+      plotType: area
+    visualization: time-chart
+    title: Ingest (Events/sec)
+    type: query
+    start: 24h
+    width: 6
+  recent-users:
+    x: 6
+    y: 0
+    height: 3
+    queryString: |-
+      #type=humio | "received query" AND query=* user!=nouser | groupby([dataspace,user], function=[count(), max(@timestamp, as=@timestamp)]) | sort(@timestamp)
+    visualization: table-view
+    title: Recent Users
+    type: query
+    start: 4h
+    width: 6
+  ingest-per-sec:
+    x: 3
+    y: 0
+    height: 3
+    queryString: |-
+      type=METER | regex("written-events/(?<dataspace>.*)", field=name) | groupBy([dataspace, @host], function=avg(m1)) | sum(_avg)
+    options:
+      redLowerLimit: '0'
+      redUpperLimit: '100'
+      decimalPoints: '0'
+    visualization: simple-gauge
+    title: Ingest events/sec
+    type: query
+    start: 1m
+    width: 3
+  internal-errors:
+    x: 0
+    y: 8
+    height: 3
+    queryString: |-
+            loglevel=ERROR not GitHubEventIngester | regex("(?<exception>[\w\.]+Exception)", strict=false) | groupBy([class, exception], function=[count(), collect(@host)]) | table([_count, class, @host, exception], sortby=_count)
+    visualization: table-view
+    title: Internal Errors
+    type: query
+    start: 24h
+    width: 12
+  live-queries:
+    x: 0
+    y: 0
+    height: 3
+    queryString: |-
+      #type=humio class=c.h.metrics name=livequery-count | groupBy(@host, function=max(value)) | sum(_max)
+    options:
+      redLowerLimit: '0'
+      redUpperLimit: '100'
+      decimalPoints: '0'
+    visualization: simple-gauge
+    title: Live Queries
+    type: query
+    start: 1m
+    width: 3
+  gb-per-day:
+    x: 6
+    y: 3
+    height: 5
+    queryString: |-
+      type=METER m1>1 | regex("ingest-bytes/(?<dataspace>.*)", field=name) | timechart(dataspace, function={ groupby(@host, function=avg(m1)) | sum(_avg) }, span=1d, unit="B/s to GB/day")
+    options:
+      areaOpacity: '0.2'
+      showLegend: 'true'
+      stacking: normal
+      yAxisScale: linear
+      plotType: area
+    visualization: time-chart
+    title: Ingest (GB/day)
+    type: query
+    start: 7d
+    width: 6

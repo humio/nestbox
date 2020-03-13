@@ -1,0 +1,7 @@
+notifiers: []
+name: TestAlert
+description: A test alert
+silenced: false
+queryString: count(as=c, *) | c > 0
+throttleTimeMillis: 60000
+start: 10s

@@ -1,0 +1,7 @@
+id: blubalubalublublaublualbualubalaub
+name: test-app-saved-query
+queryString: i am failing
+start: 24h
+end: now
+isLive: false
+widgetType: list-view
